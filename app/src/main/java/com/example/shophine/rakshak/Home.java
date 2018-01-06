@@ -1,9 +1,11 @@
 package com.example.shophine.rakshak;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,9 +15,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.android.volley.VolleyError;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    ProgressDialog progressDialog;
+    List<Centres> centresList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +34,7 @@ public class Home extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        centresList=new ArrayList<>();
 
        /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -104,9 +116,29 @@ public class Home extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.content,chatbot).commit();
 
         } else if (id == R.id.nearbyCentre) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Fetching data!");
+            progressDialog.setMessage("Loading!! Please Wait...");
+            progressDialog.show();
 
+
+            CenterMiniEntity centerMiniEntity = new CenterMiniEntity();
+            RestClientImplementation.getLocation(centerMiniEntity, new CenterMiniEntity.RestClientInterface() {
+                @Override
+                public void onInitialize(CenterMiniEntity centres, VolleyError error) {
+                    if(error==null){
+                        centresList=centres.getResponse();
+                        Log.v("res : ",centresList.get(0).getName());
+                    }else{
+
+                    }
+                }
+            },Home.this);
+            //make api call
 
             Maps maps = new Maps();
+
+
             getSupportFragmentManager().beginTransaction().replace(R.id.content,maps).commit();
 
         }
@@ -115,4 +147,10 @@ public class Home extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void getDate(View view){
+        PickerDialog dialog=new PickerDialog();
+        dialog.show(getSupportFragmentManager(),"date_picker");
+    }
+
 }
