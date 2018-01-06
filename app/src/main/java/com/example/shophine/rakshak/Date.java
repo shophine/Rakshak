@@ -13,15 +13,25 @@ import java.text.SimpleDateFormat;
  */
 
 
-public class Date implements DatePickerDialog.OnDateSetListener {
+public class Date implements DatePickerDialog.OnDateSetListener{
 
     Context ctx;
+    private DateCallback dateCallback;
     private String date,month,year;
+    public String finalDate;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
 
+    public Date() {
+    }
 
-    public Date(Context ctx)
+    public Date(Context ctx, DateCallback dateCallback)
     {
         this.ctx=ctx;
+        this.dateCallback = dateCallback;
+        preferences = ctx.getSharedPreferences("date",Context.MODE_PRIVATE);
+        editor = preferences.edit();
+
     }
     @Override
     public void onDateSet(DatePicker view, int y, int m, int d) {
@@ -54,8 +64,14 @@ public class Date implements DatePickerDialog.OnDateSetListener {
         }
         year = String.valueOf(y);
         date = String.valueOf(d);
-        String finalDate = month+"  "+date+", "+year;
-        Toast.makeText(ctx,"Date selected successfully :"+ finalDate,Toast.LENGTH_LONG).show();
+        finalDate = month+"  "+date+", "+year;
+        //Toast.makeText(ctx,"Date selected successfully :"+ finalDate,Toast.LENGTH_LONG).show();
+        editor.putString("finalDate",finalDate);
+        editor.commit();
+        dateCallback.onDateSet(finalDate);
+    }
+    public String getFinalDate(){
+        return finalDate;
     }
 }
 

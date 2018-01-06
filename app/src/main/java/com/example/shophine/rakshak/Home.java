@@ -2,6 +2,7 @@ package com.example.shophine.rakshak;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,18 +16,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener, Serializable, DateCallback {
+    TextView textView,predictedPrice;
     ProgressDialog progressDialog;
+    SharedPreferences preferences;
+    List<String> cList,coList,rList;
     List<Centres> centresList;
+    List<Commodity> commoditiesList;
+    List<Region> regionList;
+    String date,centre,commodity,price,region,country,centreCategory="AGARTALA",commodityCategory="Milk",regionCategory;
+    Spinner regionSpinner,commoditySpinner,centerSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +47,15 @@ public class Home extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         centresList=new ArrayList<>();
-
+        cList = new ArrayList<>();
+        coList = new ArrayList<>();
+        rList = new ArrayList<>();
+        commoditiesList = new ArrayList<>();
+        textView = (TextView)findViewById(R.id.dateDisplay);
+        predictedPrice = (TextView)findViewById(R.id.predictedPrice);
+        regionSpinner = (Spinner)findViewById(R.id.region);
+        commoditySpinner = (Spinner)findViewById(R.id.commodity);
+        centerSpinner = (Spinner)findViewById(R.id.center);
        /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +73,100 @@ public class Home extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        preferences = getSharedPreferences("date",MODE_PRIVATE);
+        String date = preferences.getString("finalDate",null);
+        Toast.makeText(Home.this,date,Toast.LENGTH_LONG).show();
+
+        //spinner starts
+        final CenterMiniEntity centerMiniEntity = new CenterMiniEntity();
+        RestClientImplementation.getLocation(centerMiniEntity, new CenterMiniEntity.RestClientInterface() {
+            @Override
+            public void onInitialize(CenterMiniEntity centres, VolleyError error) {
+                if(error == null){
+                    centresList = centres.getResponse();
+                    //Toast.makeText(Home.this,centresList.get(0).getName(),Toast.LENGTH_LONG).show();
+                    for(Centres item: centresList){
+                        cList.add(item.getName());
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Home.this,android.R.layout.simple_spinner_dropdown_item,cList);
+                        centerSpinner.setAdapter(dataAdapter);
+                    }
+                }
+            }
+        },Home.this);
+
+        centerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                centreCategory = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //commoditySpinner
+
+        final CommodityMiniEntity commodityMiniEntity = new CommodityMiniEntity();
+        RestClientImplementation.getCommodity(commodityMiniEntity, new CommodityMiniEntity.RestClientInterface() {
+            @Override
+            public void onInitialize(CommodityMiniEntity commodity, VolleyError error) {
+                if(error==null){
+                    commoditiesList = commodity.getResponse();
+                    for(Commodity item:commoditiesList){
+                        coList.add(item.getName());
+                    }
+                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Home.this,android.R.layout.simple_spinner_dropdown_item,coList);
+                    commoditySpinner.setAdapter(dataAdapter);
+                }
+            }
+        },Home.this);
+
+        commoditySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                commodityCategory = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        //region Spinner
+        final RegionMiniEntity regionMiniEntity = new RegionMiniEntity();
+        RestClientImplementation.getRegion(regionMiniEntity, new RegionMiniEntity.RestClientInterface() {
+            @Override
+            public void onInitialize(RegionMiniEntity region, VolleyError error) {
+                if(error==null){
+                    regionList = region.getResponse();
+                    for (Region item:regionList){
+                        rList.add(item.getName());
+                    }
+                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Home.this,android.R.layout.simple_spinner_dropdown_item,rList);
+                    regionSpinner.setAdapter(dataAdapter);
+                }
+            }
+        },Home.this);
+
+        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                regionCategory = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        //spinner over
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -122,18 +235,6 @@ public class Home extends AppCompatActivity
             progressDialog.show();
 
 
-            CenterMiniEntity centerMiniEntity = new CenterMiniEntity();
-            RestClientImplementation.getLocation(centerMiniEntity, new CenterMiniEntity.RestClientInterface() {
-                @Override
-                public void onInitialize(CenterMiniEntity centres, VolleyError error) {
-                    if(error==null){
-                        centresList=centres.getResponse();
-                        Log.v("res : ",centresList.get(0).getName());
-                    }else{
-
-                    }
-                }
-            },Home.this);
             //make api call
 
             Maps maps = new Maps();
@@ -150,7 +251,34 @@ public class Home extends AppCompatActivity
 
     public void getDate(View view){
         PickerDialog dialog=new PickerDialog();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("callback", this);
+        dialog.setArguments(bundle);
         dialog.show(getSupportFragmentManager(),"date_picker");
     }
 
+    @Override
+    public void onDateSet(String date) {
+        textView.setText(date);
+    }
+
+    public void post(View view){
+        date = textView.getText().toString();
+        region = regionCategory;
+        commodity = commodityCategory;
+        price = "0";
+        centre = centreCategory;
+        country = "India";
+        PriceEntity entity = new PriceEntity(date,centre,commodity,price,region,country);
+        RestClientImplementation.getPrediction(entity, new PriceEntity.PriceEntityInterface() {
+            @Override
+            public void onPredicted(String predictedValue, VolleyError error) {
+                if(error==null){
+
+                    predictedPrice.setText(predictedValue);
+                    Toast.makeText(Home.this,predictedValue,Toast.LENGTH_LONG).show();
+                }
+            }
+        },Home.this);
+    }
 }

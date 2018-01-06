@@ -1,22 +1,20 @@
 package com.example.shophine.rakshak;
 
-import com.android.volley.VolleyError;
-import com.google.android.gms.maps.model.LatLng;
-
 /**
- * Created by shophine on 6/1/18.
+ * Created by shophine on 7/1/18.
  */
 
-public class Centres {
+public class Region {
     private int id;
     private String name;
 
-    public Centres() {
-    }
-
-    public Centres(int id, String name) {
+    public Region(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Region(int id) {
+        this.id = id;
     }
 
     public int getId() {
