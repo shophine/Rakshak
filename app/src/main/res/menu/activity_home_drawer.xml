@@ -29,6 +29,10 @@
                 android:id="@+id/chatbot"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Chat Bot" />
+            <item
+                android:id="@+id/nearbyCentre"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Nearby Centre" />
         </menu>
     </item>
 

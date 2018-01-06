@@ -103,6 +103,12 @@ public class Home extends AppCompatActivity
             Chatbot chatbot = new Chatbot();
             getSupportFragmentManager().beginTransaction().replace(R.id.content,chatbot).commit();
 
+        } else if (id == R.id.nearbyCentre) {
+
+
+            Maps maps = new Maps();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content,maps).commit();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
