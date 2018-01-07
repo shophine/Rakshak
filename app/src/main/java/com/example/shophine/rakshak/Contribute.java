@@ -19,28 +19,33 @@ public class Contribute extends Fragment {
 
     RecyclerView rvNews;
     NewsMiniEntity entity;
+    LinearLayoutManager manager;
     List<NewsEntity> newsList;
     NewsAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        entity = new NewsMiniEntity();
         View v = inflater.inflate(R.layout.contribute, container, false);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        manager = new LinearLayoutManager(getContext());
         newsList = new ArrayList<>();
-        /*RestClientImplementation.getNews(entity, new NewsMiniEntity.restInterface() {
+        rvNews = (RecyclerView) v.findViewById(R.id.rvNews);
+        RestClientImplementation.getNews(entity, new NewsMiniEntity.restInterface() {
             @Override
             public void onRecieve(NewsMiniEntity entity, VolleyError error) {
                 if(error == null){
                     newsList = entity.getResponse();
+                    rvNews.setLayoutManager(manager);
+                    adapter = new NewsAdapter(newsList);
+                    rvNews.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                 }
             }
         },getContext());
         adapter = new NewsAdapter(newsList);
-        rvNews = (RecyclerView) v.findViewById(R.id.rvNews);
         rvNews.setLayoutManager(manager);
-        rvNews.setAdapter(adapter);*/
+        rvNews.setAdapter(adapter);
         return v;
     }
 }
