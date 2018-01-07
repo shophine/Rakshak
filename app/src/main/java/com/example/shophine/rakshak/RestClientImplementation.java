@@ -23,7 +23,7 @@ public class RestClientImplementation  {
     public static String url,predictedPrice;
     public static void getLocation(final CenterMiniEntity centre, final CenterMiniEntity.RestClientInterface restClientInterface, final Context context){
         queue = VolleySingleton.getInstance(context).getRequestQueue();
-        url = "http://192.168.43.231:7777/api/web/getCentres";
+        url = "http://192.168.43.193:7777/api/web/getCentres";
         JsonBaseRequest request = new JsonBaseRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -47,7 +47,7 @@ public class RestClientImplementation  {
     public static void getPrediction(final PriceEntity priceEntity,final PriceEntity.PriceEntityInterface priceEntityInterface,final Context context){
 
         queue=VolleySingleton.getInstance(context).getRequestQueue();
-        url = "http://192.168.43.231:7777/api/web/price";
+        url = "http://192.168.43.193:7777/api/web/price";
         JSONObject param = priceEntity.getJsonObjectAsParams();
         JsonBaseRequest request=new JsonBaseRequest(Request.Method.POST, url, param, new Response.Listener<JSONObject>() {
             @Override
@@ -75,7 +75,7 @@ public class RestClientImplementation  {
 
     public static void getCommodity(final CommodityMiniEntity centre, final CommodityMiniEntity.RestClientInterface restClientInterface, final Context context){
         queue = VolleySingleton.getInstance(context).getRequestQueue();
-        url = "http://192.168.43.231:7777/api/web/getCommodities";
+        url = "http://192.168.43.193:7777/api/web/getCommodities";
         JsonBaseRequest request = new JsonBaseRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -99,7 +99,7 @@ public class RestClientImplementation  {
 
     public static void getRegion(final RegionMiniEntity centre, final RegionMiniEntity.RestClientInterface restClientInterface, final Context context){
         queue = VolleySingleton.getInstance(context).getRequestQueue();
-        url = "http://192.168.43.231:7777/api/web/region";
+        url = "http://192.168.43.193:7777/api/web/region";
         JsonBaseRequest request = new JsonBaseRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -116,6 +116,29 @@ public class RestClientImplementation  {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(context,""+error.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(request);
+    }
+
+    public static void getNews(final NewsMiniEntity miniEntity,final NewsMiniEntity.restInterface restInterface,final Context context){
+        queue = VolleySingleton.getInstance(context).getRequestQueue();
+        String url = "http://192.168.43.193:7777/api/web/news";
+        JsonBaseRequest request = new JsonBaseRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Gson gson = new Gson();
+                NewsMiniEntity entity = new NewsMiniEntity();
+                entity = gson.fromJson(response.toString(),NewsMiniEntity.class);
+                miniEntity.setMessage(entity.getMessage());
+                miniEntity.setResponse(entity.getResponse());
+                miniEntity.setStatusCode(entity.getStatusCode());
+                restInterface.onRecieve(miniEntity,null);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
             }
         });
         queue.add(request);
