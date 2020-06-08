@@ -1,0 +1,35 @@
+{
+  "name": "rakshak",
+  "version": "1.0.0",
+  "description": "",
+  "main": "rakshak.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prabhu231197s/Rakshak.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prabhu231197s/Rakshak/issues"
+  },
+  "homepage": "https://github.com/prabhu231197s/Rakshak#readme",
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "fs": "0.0.1-security",
+    "moment": "^2.20.1",
+    "morgan": "^1.9.0",
+    "mysql": "^2.15.0",
+    "nexmo": "^2.1.1",
+    "nodemailer": "^0.7.1",
+    "path": "^0.12.7",
+    "pm2": "^2.9.1",
+    "request": "^2.83.0",
+    "underscore": "^1.8.3"
+  }
+}

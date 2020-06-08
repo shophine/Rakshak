@@ -1,0 +1,15 @@
+{
+  "Inputs": {
+    "input1": {
+      "ColumnNames": [
+        "Date",
+        "Centre",
+        "Commodity",
+        "Price per Kg",
+        "Region",
+        "Country"
+      ]
+    }
+  },
+  "GlobalParameters": {}
+}
